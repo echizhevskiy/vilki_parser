@@ -1,7 +1,9 @@
 class ParserController < ApplicationController
     require 'open-uri'
     require 'nokogiri'
+    require 'date'
 
+    #parser for parimatch
     def parse_url
         html = open('https://www.parimatch.by/sport/khokkejj/kkhl')
         doc = Nokogiri::HTML(html.read)
