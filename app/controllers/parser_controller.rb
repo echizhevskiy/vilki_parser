@@ -21,7 +21,6 @@ class ParserController < ApplicationController
                 data['class']="row2 props processed"
             end
         end
-
         
         event = Struct.new(:date_variable, :match, :type)
         event_data = []
@@ -40,6 +39,18 @@ class ParserController < ApplicationController
                     detail_info = true
                 else 
                     # обрабатываем детальную информацию о событии (ставки с коэффициентами)
+
+                    #bets_from_parimatch = bet.new()
+                    #binding.pry
+                    total_for_event = bet.new(data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(1)').text,
+                                            'parimatch'
+                                            )
+
+                    # ------------  парсим тоталы                       
+                    test = data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(2)').search('tr:nth-child(2)').text
+                    result_ratio = test.split(';')
+                    # ----- result_ratio.each {|var| var.gsub!(/[^0-9]\./,' ')}
+
 
                     detail_info = false
                 end
