@@ -39,31 +39,66 @@ class ParserController < ApplicationController
                     detail_info = true
                 else 
                     # обрабатываем детальную информацию о событии (ставки с коэффициентами)
+                     #binding.pry
+                     # ------------  парсим дополнительные тоталы с париматча                   
+                    data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(2)').search('td:nth-child(1)').search('td:nth-child(2)').text.split(';').each do |var|
+                        array_attributes = [] 
+                        var.split(' ').each do |get_attr|
+                            array_attributes.push(get_attr)
+                        end 
+                       # puts array_attributes.size
+                       # puts "-----------------------------------"
+                       #binding.pry
+                        if (array_attributes.size%2 == 0)
+                            array_attributes.push(copy_array_attributes[0])
+                            total_for_event = bet.new(data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(1)').text,
+                                                    'parimatch',
+                                                    array_attributes[1],
+                                                    array_attributes[2],
+                                                    array_attributes[0]
+                                                    )
+                            bet_data.push(total_for_event)
+                            
+                        else
+                            copy_array_attributes = []
+                            copy_array_attributes.push(array_attributes.compact) # копирует массив, удаляя все nill из него 
+                            total_for_event = bet.new(data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(1)').text,
+                                                    'parimatch',
+                                                    array_attributes[2],
+                                                    array_attributes[0],
+                                                    array_attributes[1]
+                                                    )
+                            bet_data.push(total_for_event)
+                        end    
+                    end
+                    puts bet_data
+                     #-------------------------------------------------------- 
 
-                    #bets_from_parimatch = bet.new()
-                    #binding.pry
-                    total_for_event = bet.new(data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(1)').text,
-                                            'parimatch'
-                                            )
+                     #------------- парсим индивидуальный тотал домашней команды с париматча
+                     #get_total_team_home = data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(2)').search('tr:nth-child(3)').text.split(";")
+                     #puts get_total_team_home
 
-                    # ------------  парсим тоталы                       
-                    test = data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(2)').search('tr:nth-child(2)').text
-                    result_ratio = test.split(';')
+                     # ---------------------------------------------------------------------
+
+                    
+                    #-------------- парсим индивидуальный тотал гостевой команды с париматча
+
+
+                    # ---------------------------------------------------------------------
+                                     
+                    #total_for_event = bet.new(data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(1)').text,
+                    #                          'parimatch'
+                    #                        )
+                    #puts data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(2)').search('tr:nth-child(2)').text
                     # ----- result_ratio.each {|var| var.gsub!(/[^0-9]\./,' ')}
-
+                    # ----- result_ratio
 
                     detail_info = false
                 end
             end
-            # event_data.each_with_index { |item, i| event_data.delete_at(i+1)}
-
-            #bets_from_parimatch = bet.new()
-           # tbody.css('tbody.row1.props.processed tr td table.ps').each do |td|
-           #        puts td.text
-           #         bet_data.push(ratio: td.css('tr td')[0].text) 
-           # end
         end
-        puts event_data
+        #puts bet_data
+        #puts event_data
 
 
         # -------------------------- отображение события (дата, играющие команды, тип поединка)-------------------------
