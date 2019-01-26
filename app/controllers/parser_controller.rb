@@ -21,7 +21,7 @@ class ParserController < ApplicationController
                 data['class']="row2 props processed"
             end
         end
-        
+
         event = Struct.new(:date_variable, :match, :type)
         event_data = []
 
@@ -30,8 +30,8 @@ class ParserController < ApplicationController
         
         detail_info = false
         doc.css('div#z_container div#z_contentw div#oddsList table.dt').each do |tbody|
-            tbody.css('tbody.row1', 'tbody.row2').each_with_index do |data, index|
-                binding.pry
+            tbody.css('tbody.row1, tbody.row2').each do |data|
+                #binding.pry
                 if(detail_info == false)
                     events_from_parimatch = event.new(data.css('tr td')[1].text.insert(5, ' '), 
                                                     data.css('tr td a.om').children.to_s.gsub('<br>', ' -- '), 
@@ -42,7 +42,7 @@ class ParserController < ApplicationController
                     # обрабатываем детальную информацию о событии (ставки с коэффициентами)
                      #binding.pry
                      # ------------  парсим дополнительные тоталы с париматча                   
-                    data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(2)').search('td:nth-child(1)').search('tr:nth-child(2)').text.split(';').each_with_index do |var, i|
+                    data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(2)').search('td:nth-child(1)').search('tr:nth-child(2)').text.split(';').each do |var|
                         array_attributes = [] 
                         var.split(' ').each do |get_attr|
                             array_attributes.push(get_attr)
@@ -54,7 +54,7 @@ class ParserController < ApplicationController
                             total_for_event = bet.new(data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(1)').text,
                                                     'parimatch',
                                                     array_attributes[1],
-                                                    bet_data[i-1].attr_1,
+                                                    bet_data[-1].attr_1,
                                                     array_attributes[0]
                                                     )
                             bet_data.push(total_for_event)
@@ -95,18 +95,7 @@ class ParserController < ApplicationController
             end
         end
         puts bet_data
-        #puts event_data
-
-
-        # -------------------------- отображение события (дата, играющие команды, тип поединка)-------------------------
-        # ----------   #<struct date_variable="13/01 12:30", match="Сибирь -- Салават Юлаев", type="Хоккей. КХЛ"> ------
-        #event_data.each do |data|
-        #    puts data
-        #end
-        # --------------------------------------------------------------------------------------------------------------
-
-
-
+        puts event_data
     end
 
 end
