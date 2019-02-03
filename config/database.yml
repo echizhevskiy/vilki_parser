@@ -31,4 +31,5 @@ development:
   database: developmentbets
   host: localhost
   pool: 5
- 
+  username: postgres
+  password: <password-from-database-here>
