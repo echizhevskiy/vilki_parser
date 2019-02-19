@@ -4,14 +4,10 @@ class ParserController < ApplicationController
     require 'date'
 
     #parser for parimatch
-    def parse_url
+    def parse_parimatch
         html = open('https://www.parimatch.by/sport/khokkejj/kkhl')
         doc = Nokogiri::HTML(html.read)
         doc.encoding = 'utf-8'
-
-        #binding.pry
-        # <tbody class="row1"></tbody>
-        # <tbody class="row1 props"></tbody>
 
         doc.css('div#z_container div#z_contentw div#oddsList table.dt').each do |el|
             el.css('tbody.row1.props').each do |data|
@@ -22,21 +18,23 @@ class ParserController < ApplicationController
             end
         end
 
-        event = Struct.new(:date_variable, :match, :type)
-        event_data = []
+        #event = Struct.new(:date_variable, :match, :type)
+        #event_data = []
 
-        bet = Struct.new(:kind, :office, :ratio, :attr_1, :attr_2)
-        bet_data = []
+        #bet = Struct.new(:kind, :office, :ratio, :attr_1, :attr_2)
+        #bet_data = []
         
         detail_info = false
         doc.css('div#z_container div#z_contentw div#oddsList table.dt').each do |tbody|
             tbody.css('tbody.row1, tbody.row2').each do |data|
                 #binding.pry
                 if(detail_info == false)
-                    events_from_parimatch = event.new(data.css('tr td')[1].text.insert(5, ' '), 
-                                                    data.css('tr td a.om').children.to_s.gsub('<br>', ' -- '), 
-                                                    doc.css('div#z_container div#z_contentw div#oddsList div.container h3').text)
-                    event_data.push(events_from_parimatch)
+                    events_from_parimatch = Event.new(date: data.css('tr td')[1].text.insert(5, ' '), 
+                                                      match: data.css('tr td a.om').children.to_s.gsub('<br>', ' -- '), 
+                                                      match_kind: doc.css('div#z_container div#z_contentw div#oddsList div.container h3').text
+                                                    )
+                    events_from_parimatch.save
+                    #event_data.push(events_from_parimatch)
                     detail_info = true
                 else 
                     # обрабатываем детальную информацию о событии (ставки с коэффициентами)
@@ -51,22 +49,26 @@ class ParserController < ApplicationController
                        # puts "-----------------------------------"
                        #binding.pry
                         if (array_attributes.size%2 == 0)
-                            total_for_event = bet.new(data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(1)').text,
-                                                    'parimatch',
-                                                    array_attributes[1],
-                                                    bet_data[-1].attr_1,
-                                                    array_attributes[0]
+                            total_for_event = Bet.new(event_id: Event.last.id,
+                                                      kind: data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(1)').text,
+                                                      office: "parimatch",
+                                                      ratio: array_attributes[1],
+                                                      attr_1: Bet.last.attr_1,
+                                                      attr_3: array_attributes[0]
                                                     )
-                            bet_data.push(total_for_event)
+                            total_for_event.save                        
+                            #bet_data.push(total_for_event)
                             
                         else
-                            total_for_event = bet.new(data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(1)').text,
-                                                    'parimatch',
-                                                    array_attributes[2],
-                                                    array_attributes[0].gsub!(/[^0-9,.]/,''),
-                                                    array_attributes[1]
+                            total_for_event = Bet.new(event_id: Event.last.id,
+                                                      kind: data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(1)').text,
+                                                      office: "parimatch",
+                                                      ratio: array_attributes[2],
+                                                      attr_1: array_attributes[0].gsub!(/[^0-9,.]/,''),
+                                                      attr_3: array_attributes[1]
                                                     )
-                            bet_data.push(total_for_event)
+                            total_for_event.save                         
+                            #bet_data.push(total_for_event)
                         end    
                     end
                      #-------------------------------------------------------- 
@@ -94,7 +96,27 @@ class ParserController < ApplicationController
                 end
             end
         end
-        puts bet_data
+    end
+
+    def parse_leon
+        html = open('https://www.leon.ru/events/IceHockey/562949953421985-Russia-KHL')
+        doc = Nokogiri::HTML(html.read)
+        doc.encoding = 'utf-8'
+
+        event_data = []
+        detail_info = false
+        doc.css('div.content div.fon div.body div.main span div.st-group ul').each do |main|
+            main.css('li.st-event-container li.odd').each do |test|
+              event_data.push({
+                  test: test.text #main.search('div:nth-child(2)').search('div:nth-child(1)').search('ul:nth-child(1)').search('li:nth-child(1)').text
+              })  
+               # event_data.push({
+               #     match_kind: main.css('div.head-title div.middle a').text.strip,
+                    #date: li.search('div:nth-child(1)').search('div:nth-child(1)').text,
+                    #match: li.search('div:nth-child(1)').search('div:nth-child(2)').text
+               # })
+            end
+        end
         puts event_data
     end
 
