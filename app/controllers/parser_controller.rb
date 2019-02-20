@@ -29,10 +29,9 @@ class ParserController < ApplicationController
         detail_info = false
         doc.css('div#z_container div#z_contentw div#oddsList table.dt').each do |tbody|
             tbody.css('tbody.row1, tbody.row2').each do |data|
-                #binding.pry
                 if(detail_info == false)
                     events_from_parimatch = Event.new(date: data.css('tr td')[1].text.insert(5, ' '), 
-                                                      match: data.css('tr td a.om').children.to_s.gsub('<br>', ' -- '), 
+                                                      match: data.css('tr td a.om').children.to_s.gsub('<br>', ' - '), 
                                                       match_kind: doc.css('div#z_container div#z_contentw div#oddsList div.container h3').text
                                                     )
                     events_from_parimatch.save
@@ -41,36 +40,30 @@ class ParserController < ApplicationController
                 else 
                     # обрабатываем детальную информацию о событии (ставки с коэффициентами)
                      #binding.pry
-                     # ------------  парсим дополнительные тоталы с париматча                   
+                     # ------------  парсим дополнительные (не парсит с заглавного события) тоталы с париматча                   
                     data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(2)').search('td:nth-child(1)').search('tr:nth-child(2)').text.split(';').each do |var|
                         array_attributes = [] 
                         var.split(' ').each do |get_attr|
                             array_attributes.push(get_attr)
                         end 
-                       # puts array_attributes.size
-                       # puts "-----------------------------------"
-                       #binding.pry
                         if (array_attributes.size%2 == 0)
                             total_for_event = Bet.new(event_id: Event.last.id,
-                                                      kind: data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(1)').text,
+                                                      kind: "total", #data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(1)').text,
                                                       office: "parimatch",
                                                       ratio: array_attributes[1],
                                                       attr_1: Bet.last.attr_1,
                                                       attr_3: array_attributes[0]
                                                     )
                             total_for_event.save                        
-                            #bet_data.push(total_for_event)
-                            
                         else
                             total_for_event = Bet.new(event_id: Event.last.id,
-                                                      kind: data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(1)').text,
+                                                      kind: "total", #data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(1)').text,
                                                       office: "parimatch",
                                                       ratio: array_attributes[2],
                                                       attr_1: array_attributes[0].gsub!(/[^0-9,.]/,''),
                                                       attr_3: array_attributes[1]
                                                     )
                             total_for_event.save                         
-                            #bet_data.push(total_for_event)
                         end    
                     end
                      #-------------------------------------------------------- 
@@ -100,39 +93,53 @@ class ParserController < ApplicationController
         end
     end
 
+    #parser for leon bet
     def parse_leon
         browser = Watir::Browser.new
-        browser.goto('https://www.leon.ru/events/IceHockey/562949953421985-Russia-KHL')
-        browser.is(class: /material-icons keyboard_arrow_down/).each do |test|
-            test.click
-            sleep(0.3)
-        end
-        sleep(4)
-
-        doc = Nokogiri::HTML(browser.html)
-        doc.encoding = 'utf-8'
-  
+        
         event_data = []
-        detail_info = false
-        doc.css('div.content div.fon div.body div.main span').each do |main|
-            main.css('li.st-event-container').each do |date|
-              time = date.search('div:nth-child(1)').search('div:nth-child(1)').search('span:nth-child(1)').search('div:nth-child(1)').text
-              date = date.search('div:nth-child(1)').search('div:nth-child(1)').search('span:nth-child(1)').search('div:nth-child(2)').text
-              final_time = Time.parse time + " " + date
-              event_data.push({
-                  date: final_time,    # формат Time   
-                  match: date.search('div:nth-child(1)').search('div:nth-child(2)').search('div:nth-child(1)').search('a:nth-child(1)').search('span:nth-child(1)').text,
-                  match_kind: main.css('div.head-title div.middle a').text.strip 
-              })  
-               # event_data.push({
-               #     match_kind: main.css('div.head-title div.middle a').text.strip,
-                    #date: li.search('div:nth-child(1)').search('div:nth-child(1)').text,
-                    #match: li.search('div:nth-child(1)').search('div:nth-child(2)').text
-               # })
-            end
+        bet_data = []
+        
+        browser.goto('https://www.leon.ru/events/IceHockey/562949953421985-Russia-KHL')
+
+            doc = Nokogiri::HTML(browser.html)
+            doc.encoding = 'utf-8'
+
+        browser.is(class: /material-icons keyboard_arrow_down/).each do |icon|
+            icon.click
+            sleep(0.3)
+            detail_info = false
+            doc.css('div.content div.fon div.body div.main span').each do |main|
+                main.css('li.st-event-container').each do |data|
+                    #if (detail_info == false)
+                    binding.pry
+                    data.search('div:nth-child(2)').search('ul:nth-child(1)').search('li:nth-child(2)').search('div:nth-child(4)').search('div:nth-child(1)').search('ul:nth-child(1)').each {|test| puts test.text }
+                    #puts data.search('div:nth-child(2)').search('ul:nth-child(1)').search('li:nth-child(2)').search('div:nth-child(4)').search('div:nth-child(1)').text.strip
+                        time = data.search('div:nth-child(1)').search('div:nth-child(1)').search('span:nth-child(1)').search('div:nth-child(1)').text
+                        date = data.search('div:nth-child(1)').search('div:nth-child(1)').search('span:nth-child(1)').search('div:nth-child(2)').text
+                        final_time = Time.parse time + " " + date
+                        event_data.push({
+                            date: final_time,    # формат Time   
+                            match: data.search('div:nth-child(1)').search('div:nth-child(2)').search('div:nth-child(1)').search('a:nth-child(1)').search('span:nth-child(1)').text,
+                            match_kind: main.css('div.head-title div.middle a').text.strip 
+                        })
+                        #detail_info = true
+                    #else
+                        bet_data.push({
+                            event_id: 1,
+                            office: "leon",
+                            kind: "total", #data.search('div:nth-child(2)').search('ul:nth-child(1)').search('li:nth-child(2)').search('div:nth-child(4)').search('div:nth-child(1)').text.strip
+                            ratio: data.search('div:nth-child(2)').search('ul:nth-child(1)').search('li:nth-child(2)').search('div:nth-child(4)').search('div:nth-child(1)').text.strip
+                        })
+                        
+                    #    detail_info = false
+                    #end  
+                end
+            end            
         end
         puts event_data
-
+        puts bet_data
+     
         browser.close
     end
 
