@@ -2,6 +2,8 @@ class ParserController < ApplicationController
     require 'open-uri'
     require 'nokogiri'
     require 'date'
+    require 'watir'
+    require 'webdrivers'
 
     #parser for parimatch
     def parse_parimatch
@@ -99,16 +101,28 @@ class ParserController < ApplicationController
     end
 
     def parse_leon
-        html = open('https://www.leon.ru/events/IceHockey/562949953421985-Russia-KHL')
-        doc = Nokogiri::HTML(html.read)
-        doc.encoding = 'utf-8'
+        browser = Watir::Browser.new
+        browser.goto('https://www.leon.ru/events/IceHockey/562949953421985-Russia-KHL')
+        browser.is(class: /material-icons keyboard_arrow_down/).each do |test|
+            test.click
+            sleep(0.3)
+        end
+        sleep(4)
 
+        doc = Nokogiri::HTML(browser.html)
+        doc.encoding = 'utf-8'
+  
         event_data = []
         detail_info = false
-        doc.css('div.content div.fon div.body div.main span div.st-group ul').each do |main|
-            main.css('li.st-event-container li.odd').each do |test|
+        doc.css('div.content div.fon div.body div.main span').each do |main|
+            main.css('li.st-event-container').each do |date|
+              time = date.search('div:nth-child(1)').search('div:nth-child(1)').search('span:nth-child(1)').search('div:nth-child(1)').text
+              date = date.search('div:nth-child(1)').search('div:nth-child(1)').search('span:nth-child(1)').search('div:nth-child(2)').text
+              final_time = Time.parse time + " " + date
               event_data.push({
-                  test: test.text #main.search('div:nth-child(2)').search('div:nth-child(1)').search('ul:nth-child(1)').search('li:nth-child(1)').text
+                  date: final_time,    # формат Time   
+                  match: date.search('div:nth-child(1)').search('div:nth-child(2)').search('div:nth-child(1)').search('a:nth-child(1)').search('span:nth-child(1)').text,
+                  match_kind: main.css('div.head-title div.middle a').text.strip 
               })  
                # event_data.push({
                #     match_kind: main.css('div.head-title div.middle a').text.strip,
@@ -118,6 +132,8 @@ class ParserController < ApplicationController
             end
         end
         puts event_data
+
+        browser.close
     end
 
 end
