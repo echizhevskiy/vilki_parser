@@ -33,7 +33,7 @@ class ParserController < ApplicationController
                 if(detail_info == false)
                     events_from_parimatch = Event.new(date: data.css('tr td')[1].text.insert(5, ' '), 
                                                       match: data.css('tr td a.om').children.to_s.gsub('<br>', ' - '), 
-                                                      match_kind: doc.css('div#z_container div#z_contentw div#oddsList div.container h3').text
+                                                      match_kind: doc.css('div#z_container div#z_contentw div#oddsList div.container h3').text.delete(' ')
                                                     )
                     events_from_parimatch.save
                     #event_data.push(events_from_parimatch)
@@ -104,7 +104,7 @@ class ParserController < ApplicationController
 
         browser.is(class: /material-icons keyboard_arrow_down/).each do |icon|
             icon.click
-            sleep(0.3)
+            sleep(0.4)
 
             doc = Nokogiri::HTML(browser.html)
             doc.encoding = 'utf-8'
@@ -115,29 +115,43 @@ class ParserController < ApplicationController
                         time = data.search('div:nth-child(1)').search('div:nth-child(1)').search('span:nth-child(1)').search('div:nth-child(1)').text
                         date = data.search('div:nth-child(1)').search('div:nth-child(1)').search('span:nth-child(1)').search('div:nth-child(2)').text
                         final_time = Time.parse time + " " + date
-                        event_data.push({
-                            date: final_time,    # формат Time   
-                            match: data.search('div:nth-child(1)').search('div:nth-child(2)').search('div:nth-child(1)').search('a:nth-child(1)').search('span:nth-child(1)').text,
-                            match_kind: main.css('div.head-title div.middle a').text.strip 
-                        })
+                        event_data = Event.new(
+                                            date: final_time,
+                                            match: data.search('div:nth-child(1)').search('div:nth-child(2)').search('div:nth-child(1)').search('a:nth-child(1)').search('span:nth-child(1)').text,
+                                            match_kind: main.css('div.head-title div.middle a').text.strip.delete(' ').gsub(/-.*-/, '.')                              
+                                            )
+                        event_data.save
+                       # event_data.push({
+                       #     date: final_time,    # формат Time   
+                       #     match: data.search('div:nth-child(1)').search('div:nth-child(2)').search('div:nth-child(1)').search('a:nth-child(1)').search('span:nth-child(1)').text,
+                       #     match_kind: main.css('div.head-title div.middle a').text.strip.delete(' ').gsub(/-.*-/, '.')
+                       # })
                     
                     data.search('div:nth-child(2)').search('ul:nth-child(1)').search('li:nth-child(2)').search('div:nth-child(4)').search('ul:nth-child(2)').css('li').each do |li| 
                         get_total_with_min_max = li.search('span:nth-child(1)').text.split(' ')
-                        bet_data.push({
-                            event_id: 1,
-                            office: "leon",
-                            kind: "total", 
-                            ratio: li.search('span:nth-child(2)').text, 
-                            attr_1: get_total_with_min_max[1].gsub!(/[^0-9,.]/,''),
-                            attr_3: get_total_with_min_max[0].mb_chars.downcase.to_s 
-                        })
+                        bet_data = Bet.new(
+                                        event_id: Event.last.id,
+                                        kind: "total",
+                                        office: "leon",
+                                        ratio: li.search('span:nth-child(2)').text, 
+                                        attr_1: get_total_with_min_max[1].gsub!(/[^0-9,.]/,''),
+                                        attr_3: get_total_with_min_max[0].mb_chars.downcase.to_s                                  
+                                        )
+                        bet_data.save
+                       # bet_data.push({
+                       #     event_id: 1,
+                       #     office: "leon",
+                       #     kind: "total", 
+                       #     ratio: li.search('span:nth-child(2)').text, 
+                       #     attr_1: get_total_with_min_max[1].gsub!(/[^0-9,.]/,''),
+                       #     attr_3: get_total_with_min_max[0].mb_chars.downcase.to_s 
+                       # })
                     end  
                 end
             end            
         end
-        puts event_data
-        puts bet_data
-     
+        #puts event_data
+        #puts bet_data    
         browser.close
     end
 
