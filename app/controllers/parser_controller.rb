@@ -1,9 +1,10 @@
+require 'open-uri'
+require 'nokogiri'
+require 'date'
+require 'watir'
+require 'webdrivers'
+
 class ParserController < ApplicationController
-    require 'open-uri'
-    require 'nokogiri'
-    require 'date'
-    require 'watir'
-    require 'webdrivers'
 
     #parser for parimatch
     def parse_parimatch
@@ -99,22 +100,18 @@ class ParserController < ApplicationController
         
         event_data = []
         bet_data = []
-        
         browser.goto('https://www.leon.ru/events/IceHockey/562949953421985-Russia-KHL')
-
-            doc = Nokogiri::HTML(browser.html)
-            doc.encoding = 'utf-8'
 
         browser.is(class: /material-icons keyboard_arrow_down/).each do |icon|
             icon.click
             sleep(0.3)
-            detail_info = false
+
+            doc = Nokogiri::HTML(browser.html)
+            doc.encoding = 'utf-8'
+
+            #достаю только раскрытые блоки в цикле, все остальные игнорируются
             doc.css('div.content div.fon div.body div.main span').each do |main|
-                main.css('li.st-event-container').each do |data|
-                    #if (detail_info == false)
-                    binding.pry
-                    data.search('div:nth-child(2)').search('ul:nth-child(1)').search('li:nth-child(2)').search('div:nth-child(4)').search('div:nth-child(1)').search('ul:nth-child(1)').each {|test| puts test.text }
-                    #puts data.search('div:nth-child(2)').search('ul:nth-child(1)').search('li:nth-child(2)').search('div:nth-child(4)').search('div:nth-child(1)').text.strip
+                main.css('li.expanded').each do |data|
                         time = data.search('div:nth-child(1)').search('div:nth-child(1)').search('span:nth-child(1)').search('div:nth-child(1)').text
                         date = data.search('div:nth-child(1)').search('div:nth-child(1)').search('span:nth-child(1)').search('div:nth-child(2)').text
                         final_time = Time.parse time + " " + date
@@ -123,17 +120,18 @@ class ParserController < ApplicationController
                             match: data.search('div:nth-child(1)').search('div:nth-child(2)').search('div:nth-child(1)').search('a:nth-child(1)').search('span:nth-child(1)').text,
                             match_kind: main.css('div.head-title div.middle a').text.strip 
                         })
-                        #detail_info = true
-                    #else
+                    
+                    data.search('div:nth-child(2)').search('ul:nth-child(1)').search('li:nth-child(2)').search('div:nth-child(4)').search('ul:nth-child(2)').css('li').each do |li| 
+                        get_total_with_min_max = li.search('span:nth-child(1)').text.split(' ')
                         bet_data.push({
                             event_id: 1,
                             office: "leon",
-                            kind: "total", #data.search('div:nth-child(2)').search('ul:nth-child(1)').search('li:nth-child(2)').search('div:nth-child(4)').search('div:nth-child(1)').text.strip
-                            ratio: data.search('div:nth-child(2)').search('ul:nth-child(1)').search('li:nth-child(2)').search('div:nth-child(4)').search('div:nth-child(1)').text.strip
+                            kind: "total", 
+                            ratio: li.search('span:nth-child(2)').text, 
+                            attr_1: get_total_with_min_max[1].gsub!(/[^0-9,.]/,''),
+                            attr_3: get_total_with_min_max[0].mb_chars.downcase.to_s 
                         })
-                        
-                    #    detail_info = false
-                    #end  
+                    end  
                 end
             end            
         end
