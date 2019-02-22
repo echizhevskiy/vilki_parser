@@ -31,8 +31,23 @@ class ParserController < ApplicationController
         doc.css('div#z_container div#z_contentw div#oddsList table.dt').each do |tbody|
             tbody.css('tbody.row1, tbody.row2').each do |data|
                 if(detail_info == false)
-                    events_from_parimatch = Event.new(date: data.css('tr td')[1].text.insert(5, ' '), 
-                                                      match: data.css('tr td a.om').children.to_s.gsub('<br>', ' - '), 
+
+                    # Получаем дату в формате 23/02 13:30 UTC +2 (при скачивании html страницы), отображается для пользователя в формате UTC +3
+                    # Преобразовываем дату в формат Time 2019-02-23 14:30:00 +0300
+                    date_from_parimatch = data.css('tr td')[1].text.insert(5, ' ').split(' ') # ["23/02", "13:30" ]
+                    date_from_parimatch[1] = date_from_parimatch[1].to_time + 3600  # ["23/02", "2019-02-22 14:30:00 +0300" ]
+                    date_from_parimatch[1] = date_from_parimatch[1].strftime("%H:%M") # [ "23/02", "14:30" ]
+                    temp = date_from_parimatch[0].split('/') # ["23", "02", "14:30"]
+                    temp = temp[1] + '/' + temp[0] # 02/23
+                    date_from_parimatch.push(temp).shift # ["14:30" "02/23"]
+
+                    final_date = Time.parse(date_from_parimatch[1])
+                    final_date = Time.parse(date_from_parimatch[0], final_date)
+                    teams = data.css('tr td a.om').children.to_s.split('<br>')
+                    
+                    events_from_parimatch = Event.new(date: final_date, 
+                                                      home_team: teams[0],
+                                                      guest_team: teams[1],
                                                       match_kind: doc.css('div#z_container div#z_contentw div#oddsList div.container h3').text.delete(' ')
                                                     )
                     events_from_parimatch.save
@@ -115,9 +130,12 @@ class ParserController < ApplicationController
                         time = data.search('div:nth-child(1)').search('div:nth-child(1)').search('span:nth-child(1)').search('div:nth-child(1)').text
                         date = data.search('div:nth-child(1)').search('div:nth-child(1)').search('span:nth-child(1)').search('div:nth-child(2)').text
                         final_time = Time.parse time + " " + date
+                        teams = data.search('div:nth-child(1)').search('div:nth-child(2)').search('div:nth-child(1)').search('a:nth-child(1)').search('span:nth-child(1)').text.split(' - ')
+
                         event_data = Event.new(
                                             date: final_time,
-                                            match: data.search('div:nth-child(1)').search('div:nth-child(2)').search('div:nth-child(1)').search('a:nth-child(1)').search('span:nth-child(1)').text,
+                                            home_team: teams[0],
+                                            guest_team: teams[1],
                                             match_kind: main.css('div.head-title div.middle a').text.strip.delete(' ').gsub(/-.*-/, '.')                              
                                             )
                         event_data.save
