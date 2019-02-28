@@ -8,7 +8,7 @@ class ParserController < ApplicationController
 
     #parser for parimatch
     def parse_parimatch
-        html = open('https://www.parimatch.by/sport/khokkejj/kkhl')
+        html = open('https://pm.by/sport/khokkejj/mkhl')
         doc = Nokogiri::HTML(html.read)
         doc.encoding = 'utf-8'
 
@@ -50,7 +50,12 @@ class ParserController < ApplicationController
                                                       guest_team: teams[1],
                                                       match_kind: doc.css('div#z_container div#z_contentw div#oddsList div.container h3').text.delete(' ')
                                                     )
-                    events_from_parimatch.save
+                    
+                    if is_event_in_database?(events_from_parimatch.date, events_from_parimatch.match_kind, events_from_parimatch.home_team, events_from_parimatch.guest_team)
+                        puts "True value"
+                    else
+                        events_from_parimatch.save
+                    end
                     #event_data.push(events_from_parimatch)
                     detail_info = true
                 else 
@@ -115,7 +120,7 @@ class ParserController < ApplicationController
         
         event_data = []
         bet_data = []
-        browser.goto('https://www.leon.ru/events/IceHockey/562949953421985-Russia-KHL')
+        browser.goto('https://www.leon.ru/events/IceHockey/562949953432733-Russia-MHL')
 
         browser.is(class: /material-icons keyboard_arrow_down/).each do |icon|
             icon.click
@@ -171,6 +176,34 @@ class ParserController < ApplicationController
         #puts event_data
         #puts bet_data    
         browser.close
+    end
+
+
+    private
+
+    def is_event_in_database?(final_date, match_kind, home_team, guest_team)
+        get_events = Event.where(match_kind: match_kind, date: final_date)
+        if get_events.empty?
+            return false
+        else
+            get_home_team = get_events.collect {|event| event.home_team}
+            get_guest_team = get_events.collect {|event| event.guest_team}
+
+            get_home_team.collect do |team|
+                if(team == home_team)
+                puts "#{team} is exist on db"
+                return true
+                elsif (team.include? home_team)
+                    puts "#{team} contains #{home_team}"
+                    return true
+                elsif (home_team.include? team)
+                    puts "#{home_team} includes #{team}"
+                    return true
+                else
+                    return false
+                end
+            end
+        end
     end
 
 end
