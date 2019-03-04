@@ -51,16 +51,15 @@ class ParserController < ApplicationController
                                                       match_kind: doc.css('div#z_container div#z_contentw div#oddsList div.container h3').text.delete(' ')
                                                     )
                     
-                    if is_event_in_database?(events_from_parimatch.date, events_from_parimatch.match_kind, events_from_parimatch.home_team, events_from_parimatch.guest_team)
-                        puts "True value"
-                    else
+                    if find_event_in_database(events_from_parimatch.date, events_from_parimatch.match_kind, events_from_parimatch.home_team, events_from_parimatch.guest_team).nil?
                         events_from_parimatch.save
+                        @event_id = Event.last.id
+                    else
+                        @event_id = find_event_in_database(events_from_parimatch.date, events_from_parimatch.match_kind, events_from_parimatch.home_team, events_from_parimatch.guest_team)
                     end
-                    #event_data.push(events_from_parimatch)
                     detail_info = true
-                else 
+                else
                     # обрабатываем детальную информацию о событии (ставки с коэффициентами)
-                     #binding.pry
                      # ------------  парсим дополнительные (не парсит с заглавного события) тоталы с париматча                   
                     data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(2)').search('td:nth-child(1)').search('tr:nth-child(2)').text.split(';').each do |var|
                         array_attributes = [] 
@@ -68,7 +67,7 @@ class ParserController < ApplicationController
                             array_attributes.push(get_attr)
                         end 
                         if (array_attributes.size%2 == 0)
-                            total_for_event = Bet.new(event_id: Event.last.id,
+                            total_for_event = Bet.new(event_id: @event_id,
                                                       kind: "total", #data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(1)').text,
                                                       office: "parimatch",
                                                       ratio: array_attributes[1],
@@ -77,7 +76,7 @@ class ParserController < ApplicationController
                                                     )
                             total_for_event.save                        
                         else
-                            total_for_event = Bet.new(event_id: Event.last.id,
+                            total_for_event = Bet.new(event_id: @event_id,
                                                       kind: "total", #data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(1)').text,
                                                       office: "parimatch",
                                                       ratio: array_attributes[2],
@@ -143,17 +142,18 @@ class ParserController < ApplicationController
                                             guest_team: teams[1],
                                             match_kind: main.css('div.head-title div.middle a').text.strip.delete(' ').gsub(/-.*-/, '.')                              
                                             )
-                        event_data.save
-                       # event_data.push({
-                       #     date: final_time,    # формат Time   
-                       #     match: data.search('div:nth-child(1)').search('div:nth-child(2)').search('div:nth-child(1)').search('a:nth-child(1)').search('span:nth-child(1)').text,
-                       #     match_kind: main.css('div.head-title div.middle a').text.strip.delete(' ').gsub(/-.*-/, '.')
-                       # })
+
+                        if find_event_in_database(event_data.date, event_data.match_kind, event_data.home_team, event_data.guest_team).nil?
+                            event_data.save
+                            @event_id = Event.last.id
+                        else
+                            @event_id = find_event_in_database(event_data.date, event_data.match_kind, event_data.home_team, event_data.guest_team)
+                        end
                     
                     data.search('div:nth-child(2)').search('ul:nth-child(1)').search('li:nth-child(2)').search('div:nth-child(4)').search('ul:nth-child(2)').css('li').each do |li| 
                         get_total_with_min_max = li.search('span:nth-child(1)').text.split(' ')
                         bet_data = Bet.new(
-                                        event_id: Event.last.id,
+                                        event_id: @event_id,
                                         kind: "total",
                                         office: "leon",
                                         ratio: li.search('span:nth-child(2)').text, 
@@ -161,14 +161,6 @@ class ParserController < ApplicationController
                                         attr_3: get_total_with_min_max[0].mb_chars.downcase.to_s                                  
                                         )
                         bet_data.save
-                       # bet_data.push({
-                       #     event_id: 1,
-                       #     office: "leon",
-                       #     kind: "total", 
-                       #     ratio: li.search('span:nth-child(2)').text, 
-                       #     attr_1: get_total_with_min_max[1].gsub!(/[^0-9,.]/,''),
-                       #     attr_3: get_total_with_min_max[0].mb_chars.downcase.to_s 
-                       # })
                     end  
                 end
             end            
@@ -180,29 +172,28 @@ class ParserController < ApplicationController
 
 
     private
-
-    def is_event_in_database?(final_date, match_kind, home_team, guest_team)
+    # поиск события в базе по имени команды
+    # возвращает nill, если события нет в базе
+    # возвращает event_id события, которое находится в базе
+    def find_event_in_database(final_date, match_kind, home_team, guest_team)
         get_events = Event.where(match_kind: match_kind, date: final_date)
         if get_events.empty?
-            return false
-        else
-            get_home_team = get_events.collect {|event| event.home_team}
-            get_guest_team = get_events.collect {|event| event.guest_team}
-
-            get_home_team.collect do |team|
-                if(team == home_team)
-                puts "#{team} is exist on db"
-                return true
-                elsif (team.include? home_team)
-                    puts "#{team} contains #{home_team}"
-                    return true
-                elsif (home_team.include? team)
-                    puts "#{home_team} includes #{team}"
-                    return true
-                else
-                    return false
+            return
+        elsif
+            get_events.collect do |event|
+                h = Hash.new 
+                h = {"home_team" => event.home_team, "id" => event.id}
+                #binding.pry
+                if (h["home_team"] == home_team)
+                    return h["id"]
+                elsif (h["home_team"].include? home_team)
+                    return h["id"]
+                elsif (home_team.include? h["home_team"])
+                    return h["id"]
                 end
             end
+        else 
+            return
         end
     end
 
