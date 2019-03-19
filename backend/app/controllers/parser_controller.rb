@@ -7,7 +7,7 @@ require 'webdrivers'
 class ParserController < ApplicationController
 
     #parser for parimatch
-    def parse_parimatch
+    def self.parse_parimatch
         html = open('https://pm.by/sport/khokkejj/mkhl')
         doc = Nokogiri::HTML(html.read)
         doc.encoding = 'utf-8'
@@ -114,7 +114,7 @@ class ParserController < ApplicationController
     end
 
     #parser for leon bet
-    def parse_leon
+    def self.parse_leon
         browser = Watir::Browser.new
         
         event_data = []
@@ -175,7 +175,7 @@ class ParserController < ApplicationController
     # поиск события в базе по имени команды
     # возвращает nill, если события нет в базе
     # возвращает event_id события, которое находится в базе
-    def find_event_in_database(final_date, match_kind, home_team, guest_team)
+    def self.find_event_in_database(final_date, match_kind, home_team, guest_team)
         get_events = Event.where(match_kind: match_kind, date: final_date)
         if get_events.empty?
             return
@@ -195,10 +195,6 @@ class ParserController < ApplicationController
         else 
             return
         end
-    end
-
-    def calculate_vilk_in_total
-        
     end
 
 end
