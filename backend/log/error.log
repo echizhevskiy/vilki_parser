@@ -2,3 +2,7 @@ Please specify a valid ruby command or the path of a script to run.
 Run 'bin/rails runner -h' for help.
 
 undefined method `find_event_in_database' for ParserController:Class
+Please specify a valid ruby command or the path of a script to run.
+Run 'bin/rails runner -h' for help.
+
+undefined method `parse_parimatch' for ParserController:Class

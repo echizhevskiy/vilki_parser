@@ -12,5 +12,5 @@ set :path, '/home/echizhevsly/scripts/vilki_parser/backend'
 job_type :runner, "cd :path && bundle exec rails runner -e :environment ':task' :output"
 
 every 2.days do 
-    runner "ParserController.parse_parimatch"
+    runner "ParserController.new.parse_parimatch"
 end

@@ -7,7 +7,7 @@ class BetController < ApplicationController
             bets_array.push({
                 bet_id: bet.id,
                 event_id: bet.event_id,
-                match: Event.find(bet.event_id).match,
+                match: Event.find(bet.event_id).match_kind,
                 date: Event.find(bet.event_id).date,
                 office: bet.office,
                 kind: bet.kind,
