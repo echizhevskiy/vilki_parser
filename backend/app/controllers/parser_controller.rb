@@ -57,35 +57,41 @@ class ParserController < ApplicationController
                     detail_info = true
                 else
                     # обрабатываем детальную информацию о событии (ставки с коэффициентами)
-                     # ------------  парсим дополнительные (не парсит с заглавного события) тоталы с париматча                   
-                    data.search('tr:nth-child(13)').search('td:nth-child(2)').search('tr:nth-child(2)').search('td:nth-child(1)').search('tr:nth-child(2)').text.split(';').each do |var|
-                        array_attributes = [] 
-                        var.split(' ').each do |get_attr|
-                            array_attributes.push(get_attr)
-                        end 
-                        # смотреть какие данные парсит, если парсит неверные данные, будет ошибка связанная с нулем
-                        if (array_attributes.size%2 == 0)
-                            total_for_event = Bet.new(event_id: @event_id,
-                                                      kind: "total", #data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(1)').text,
-                                                      office: "parimatch",
-                                                      ratio: array_attributes[1],
-                                                      attr_1: Bet.last.attr_1,
-                                                      attr_3: array_attributes[0],
-                                                      last_update: start_parsing_time
-                                                    )
-                            total_for_event.save                        
-                        else
-                            total_for_event = Bet.new(event_id: @event_id,
-                                                      kind: "total", #data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(1)').text,
-                                                      office: "parimatch",
-                                                      ratio: array_attributes[2],
-                                                      attr_1: array_attributes[0].gsub!(/[^0-9,.]/,''),
-                                                      attr_3: array_attributes[1],
-                                                      last_update: start_parsing_time
-                                                    )
-                            total_for_event.save                         
-                        end    
+                     # ------------  парсим дополнительные (не парсит с заглавного события) тоталы с париматча 
+                    data.children.each do |tr|
+                        if (tr.search('td:nth-child(2)').search('tr:nth-child(1)').text == "Дополнительные тоталы: ")
+                            data.search('tr:nth-child(13)').search('td:nth-child(2)').search('tr:nth-child(2)').search('td:nth-child(1)').search('tr:nth-child(2)').text.split(';').each do |var|
+                                array_attributes = [] 
+                                var.split(' ').each do |get_attr|
+                                    array_attributes.push(get_attr)
+                                end 
+                                # смотреть какие данные парсит, если парсит неверные данные, будет ошибка связанная с нулем
+                                if (array_attributes.size%2 == 0)
+                                    total_for_event = Bet.new(event_id: @event_id,
+                                                              kind: "total", #data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(1)').text,
+                                                              office: "parimatch",
+                                                              ratio: array_attributes[1],
+                                                              attr_1: Bet.last.attr_1,
+                                                              attr_3: array_attributes[0],
+                                                              last_update: start_parsing_time
+                                                            )
+                                    total_for_event.save                        
+                                else
+                                    total_for_event = Bet.new(event_id: @event_id,
+                                                              kind: "total", #data.search('tr:nth-child(12)').search('td:nth-child(2)').search('tr:nth-child(1)').text,
+                                                              office: "parimatch",
+                                                              ratio: array_attributes[2],
+                                                              attr_1: array_attributes[0].gsub!(/[^0-9,.]/,''),
+                                                              attr_3: array_attributes[1],
+                                                              last_update: start_parsing_time
+                                                            )
+                                    total_for_event.save                         
+                                end    
+                            end
+                        end
                     end
+                     
+                    
                      #-------------------------------------------------------- 
 
                      #------------- парсим индивидуальный тотал домашней команды с париматча
@@ -154,19 +160,26 @@ class ParserController < ApplicationController
                             @event_id = find_event_in_database(event_data.date, event_data.match_kind, event_data.home_team, event_data.guest_team)
                         end
                     #ищем нужную секцию с тоталом
-                    data.search('div:nth-child(2)').search('ul:nth-child(1)').search('li:nth-child(2)').search('div:nth-child(4)').search('ul:nth-child(2)').css('li').each do |li| 
-                        get_total_with_min_max = li.search('span:nth-child(1)').text.split(' ')
-                        bet_data = Bet.new(
-                                        event_id: @event_id,
-                                        kind: "total",
-                                        office: "leon",
-                                        ratio: li.search('span:nth-child(2)').text, 
-                                        attr_1: get_total_with_min_max[1].gsub!(/[^0-9,.]/,''),
-                                        attr_3: get_total_with_min_max[0].mb_chars.downcase.to_s,
-                                        last_update: start_parsing_time                                  
-                                        )
-                        bet_data.save
+                    
+
+                    data.search('div:nth-child(2)').search('ul:nth-child(1)').search('li:nth-child(2)').css('div').each do |div|
+                        if (div.search('div:nth-child(1)').text.strip == "Тотал")
+                            data.search('div:nth-child(2)').search('ul:nth-child(1)').search('li:nth-child(2)').search('div:nth-child(4)').search('ul:nth-child(2)').css('li').each do |li| 
+                                get_total_with_min_max = li.search('span:nth-child(1)').text.split(' ')
+                                bet_data = Bet.new(
+                                                event_id: @event_id,
+                                                kind: "total",
+                                                office: "leon",
+                                                ratio: li.search('span:nth-child(2)').text, 
+                                                attr_1: get_total_with_min_max[1].gsub!(/[^0-9,.]/,''),
+                                                attr_3: get_total_with_min_max[0].mb_chars.downcase.to_s,
+                                                last_update: start_parsing_time                                  
+                                                )
+                                bet_data.save
+                            end
+                        end  
                     end  
+
                 end
             end            
         end
