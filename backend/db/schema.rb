@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_22_130140) do
+ActiveRecord::Schema.define(version: 2019_03_19_090015) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,15 +27,16 @@ ActiveRecord::Schema.define(version: 2019_02_22_130140) do
     t.float "attr_5"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "last_update"
   end
 
   create_table "events", force: :cascade do |t|
-    t.string "date", null: false
     t.string "match_kind"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "home_team"
     t.string "guest_team"
+    t.datetime "date"
   end
 
 end
