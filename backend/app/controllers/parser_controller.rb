@@ -61,7 +61,7 @@ class ParserController < ApplicationController
                      # ------------  парсим дополнительные (не парсит с заглавного события) тоталы с париматча 
                     data.children.each do |tr|
                         if (tr.search('td:nth-child(2)').search('tr:nth-child(1)').text == "Дополнительные тоталы: ")
-                            data.search('tr:nth-child(13)').search('td:nth-child(2)').search('tr:nth-child(2)').search('td:nth-child(1)').search('tr:nth-child(2)').text.split(';').each do |var|
+                            tr.search('td:nth-child(2)').search('tr:nth-child(2)').search('td:nth-child(1)').search('tr:nth-child(2)').text.split(';').each do |var|
                                 array_attributes = [] 
                                 var.split(' ').each do |get_attr|
                                     array_attributes.push(get_attr)
