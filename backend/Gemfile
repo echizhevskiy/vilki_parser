@@ -42,6 +42,8 @@ gem 'pg', '~> 1.1', '>= 1.1.4'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 gem 'awesome_print', '~> 1.8'
+# Gem for do not openning a browser when scrapping data
+gem 'headless'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
