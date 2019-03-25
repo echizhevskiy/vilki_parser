@@ -8,22 +8,22 @@
 /.bundle
 
 # Ignore the default SQLite database.
-/db/*.sqlite3
-/db/*.sqlite3-journal
-config/database.yml
+backend/db/*.sqlite3
+backend/db/*.sqlite3-journal
+backend/config/database.yml
 
 # Ignore all logfiles and tempfiles.
-/log/*
-/tmp/*
+backend/log/*
+backend/tmp/*
 !/log/.keep
 !/tmp/.keep
 
 # Ignore uploaded files in development
-/storage/*
+backend/storage/*
 !/storage/.keep
 
-/node_modules
-/yarn-error.log
+frontend/node_modules
+frontend/yarn-error.log
 
 /public/assets
 .byebug_history
