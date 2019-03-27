@@ -11,6 +11,10 @@ set :path, '/home/echizhevsly/scripts/vilki_parser/backend'
 
 job_type :runner, "cd :path && bundle exec rails runner -e :environment ':task' :output"
 
-every 2.days do 
-    runner "ParserController.new.parse_parimatch"
+every 2.hours do 
+    runner "ParserController.new.call_all_parsers"
+end
+
+every 3.hours do
+    runner "Services::Dbhelper::DbHelperService.cleanup_out_of_date_events"
 end

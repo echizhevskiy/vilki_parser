@@ -8,7 +8,7 @@ module Services
                         start_parsing_time = Time.now
                         event_data = []
                         bet_data = []
-                        browser.goto('https://www.leon.ru/events/IceHockey/562949953443953-Russia-MHL-Playoffs')
+                        browser.goto('https://www.leon.ru/events/IceHockey/562949953441000-Russia-VHL-Playoffs')
         
                         browser.is(class: /material-icons keyboard_arrow_down/).each do |icon|
                             icon.click
