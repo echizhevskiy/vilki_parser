@@ -1,9 +1,5 @@
 import {Component} from '@angular/core';
-import {DataService} from '../data/data.service';
-import {Post} from '../Post';
-import {DataSource} from '@angular/cdk/table';
-import {Observable} from 'rxjs/Observable';
-import {MatTableDataSource} from '@angular/material';
+import { BetService } from './dashboard.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,22 +7,19 @@ import {MatTableDataSource} from '@angular/material';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent {
-  constructor(private dataService: DataService) {
+  displayedColumns = ['data', 'duel', 'match', 'total', 'parimatch', 'leon'];
+  records = [];
+  constructor(private myBetService: BetService) { }
+
+  ngOnInit() {
+    this.myBetService.getBets().subscribe(data => {
+      this.records = data.bets;
+    });
   }
 
-  displayedColumns = ['data_posted', 'title', 'category'];
-  dataSource = new PostDataSource(this.dataService);
-}
-
-export class PostDataSource extends DataSource<any> {
-  constructor(private dataService: DataService) {
-    super();
-  }
-
-  connect(): Observable<Post[]> {
-    return this.dataService.getData();
-  }
-
-  disconnect() {
+  checkfortotal(data) {
+    for (let i of data) {
+      if (data[i]) {}
+    }
   }
 }

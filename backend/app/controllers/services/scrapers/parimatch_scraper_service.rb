@@ -2,7 +2,7 @@ module Services
     module Scrapers
         class ParimatchScraperService < BaseScraperService
             def parse
-                html = open('https://pm.by/sport/khokkejj/mkhl')
+                html = open('https://pm.by/sport/khokkejj/vkhl')
                 doc = Nokogiri::HTML(html.read)
                 doc.encoding = 'utf-8'
 

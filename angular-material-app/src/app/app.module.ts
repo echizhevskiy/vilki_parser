@@ -8,8 +8,9 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import {AppRouters} from './app.routes';
-import {DataService} from './data/data.service';
+import { AppRouters } from './app.routes';
+import { HttpClientModule } from '@angular/common/http';
+import { JsonpModule } from '@angular/http';
 
 @NgModule({
   declarations: [
@@ -23,10 +24,11 @@ import {DataService} from './data/data.service';
     FlexLayoutModule,
     BrowserAnimationsModule,
     MaterialModule,
-    AppRouters
+    AppRouters,
+    HttpClientModule,
+    JsonpModule
   ],
   providers: [
-    DataService,
   ],
   bootstrap: [AppComponent]
 })
