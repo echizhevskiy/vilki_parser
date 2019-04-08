@@ -7,22 +7,15 @@ module Services
                 # проверить дату на outofdate
                 # удалить события со всеми ставками 
                 def cleanup_out_of_date_events
-                    events = Event.select('bets.*, events.*').joins(:bets)
+                    events = Event.all
 
                     events.each do |event|
                         if event.date < Time.now
-                            if event.destroy
-                                Bet.where(event_id: event.id).each do |bet|
-                                    bet.destroy
-                                end
-
-                                puts "#{event.date}" + "#{event.id}" 
-                                puts "-----------------Out of date event has been deleted------------------"
-                            end
+                            Bet.where(event_id: event.id).each { |bet| bet.destroy }
+                            event.destroy
                         end
                     end
                 end
-
             end
         end
     end

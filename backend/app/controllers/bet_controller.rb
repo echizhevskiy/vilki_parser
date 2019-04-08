@@ -1,4 +1,6 @@
 class BetController < ApplicationController
+    before_action :cors_preflight_check
+
     def index
         bets = Bet.all
         events = Event.select("bets.*, events.*").joins(:bets)
@@ -23,5 +25,9 @@ class BetController < ApplicationController
         respond_to do |format|
             format.json {render json: {:bets => events_array}, status: 200 }
         end
+    end
+
+    def cors_preflight_check
+        headers['Access-Control-Allow-Origin'] = "*"
     end
 end

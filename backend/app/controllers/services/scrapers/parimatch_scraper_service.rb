@@ -26,7 +26,7 @@ module Services
                             # Получаем дату в формате 23/02 13:30 UTC +2 (при скачивании html страницы), отображается для пользователя в формате UTC +3
                             # Преобразовываем дату в формат Time 2019-02-23 14:30:00 +0300
                             date_from_parimatch = data.css('tr td')[1].text.insert(5, ' ').split(' ') # ["23/02", "13:30" ]
-                            date_from_parimatch[1] = date_from_parimatch[1].to_time + 14400  # ["23/02", "2019-02-22 14:30:00 +0300" ]
+                            date_from_parimatch[1] = date_from_parimatch[1].to_time + 10800  # ["23/02", "2019-02-22 14:30:00 +0300" ]
                             date_from_parimatch[1] = date_from_parimatch[1].strftime("%H:%M") # [ "23/02", "14:30" ]
                             temp = date_from_parimatch[0].split('/') # ["23", "02", "14:30"]
                             temp = temp[1] + '/' + temp[0] # 02/23
