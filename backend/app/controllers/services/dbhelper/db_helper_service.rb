@@ -16,6 +16,17 @@ module Services
                         end
                     end
                 end
+
+                def clean_empty_ratio_bets
+                    bet_id_array = []
+                    bets = Bet.all
+                    bets.each do |bet|
+                        if bet.ratio.nil?
+                            bet_id_array.push(bet.id)
+                        end
+                    end
+                    Bet.where(id: bet_id_array).destroy_all
+                end
             end
         end
     end

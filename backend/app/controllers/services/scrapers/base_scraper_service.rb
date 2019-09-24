@@ -13,7 +13,7 @@ module Services
                 get_list_of_match_kind.find_each do |match|
                     if get_last_update.include? match
                     else
-                    Bet.find(match.id).destroy
+                        Bet.find(match.id).destroy
                     end
                 end
             end
