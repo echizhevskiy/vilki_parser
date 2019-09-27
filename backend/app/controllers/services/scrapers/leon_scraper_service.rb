@@ -8,7 +8,7 @@ module Services
                         start_parsing_time = Time.now
                         event_data = []
                         bet_data = []
-                        browser.goto('https://www.leon.ru/events/IceHockey/1970324836981074-Russia-KHL')
+                        browser.goto('https://www.leon.ru/events/IceHockey/1970324836981376-Sweden-SHL')
         
                         browser.is(class: /material-icons keyboard_arrow_down/).each do |icon|
                             icon.click
@@ -20,17 +20,22 @@ module Services
                             #достаю только раскрытые блоки в цикле, все остальные игнорируются
                             doc.css('div.content div.fon div.body div.main span').each do |main|
                                 main.css('li.expanded').each do |data|
+                                    
+                                    
                                         time = data.search('div:nth-child(1)').search('div:nth-child(1)').search('span:nth-child(1)').search('div:nth-child(1)').text
                                         date = data.search('div:nth-child(1)').search('div:nth-child(1)').search('span:nth-child(1)').search('div:nth-child(2)').text
+                                        copy_date = date
+                                        date = date.gsub(/[^0-9]/,'')
+                                        month_list = {"Янв"=>"Jan", "Фев"=>"Feb", "Мар"=>"Mar", "Апр"=>"Apr", "Май"=>"May", "Июн"=>"Jun", "Июл"=>"Jul", "Авг"=>"Aug", "Сент"=>"Sep", "Окт"=>"Oct", "Ноя"=>"Nov", "Дек"=>"Dec"}
+                                        date = date + " " + month_list[copy_date.gsub(/[^абвгдеёжзийклмнопрстуфхцчшщъыьэюя]+/i, '')]
                                         final_time = Time.parse time + " " + date
                                         final_time = final_time + 10800
                                         teams = data.search('div:nth-child(1)').search('div:nth-child(2)').search('div:nth-child(1)').search('a:nth-child(1)').search('span:nth-child(1)').text.split(' - ')
-        
                                         event_data = Event.new(
                                                             date: final_time,
                                                             home_team: teams[0],
                                                             guest_team: teams[1],
-                                                            match_kind: main.css('div.head-title div.middle a').text.strip.delete(' ').gsub(/,.*/, '').gsub(/-.*-/, '.')                              
+                                                            match_kind: 'SHL' #main.css('div.head-title div.middle a').text.strip.delete(' ').gsub(/,.*/, '').gsub(/-.*-/, '.')                              
                                                             )
                                         @temp_match_kind = event_data.match_kind
                                         if find_event_in_database(event_data.date, event_data.match_kind, event_data.home_team, event_data.guest_team).nil?

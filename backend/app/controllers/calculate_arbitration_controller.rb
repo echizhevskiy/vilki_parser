@@ -27,8 +27,8 @@ class CalculateArbitrationController < ApplicationController
                                             if k < 1
                                                 puts("---------------------Beggining of arbitration------------------------------------")
                                                 puts("Ratio is #{k}")
-                                                puts("Office: #{office1}, Total: #{total1}, Type of total: #{bet_type1}, Ratio: #{ratio1}")
-                                                puts("Office: #{office2}, Total: #{total2}, Type of total: #{bet_type2}, Ratio: #{ratio2}")
+                                                puts("Office: #{office1}, Total: #{total1}, Type of total: #{bet_type1}, Ratio: #{ratio1}, Match: #{bet1.event_id}")
+                                                puts("Office: #{office2}, Total: #{total2}, Type of total: #{bet_type2}, Ratio: #{ratio2}, Match: #{bet2.event_id}")
                                                 puts("-----------------------End of arbitration------------------------------------")
                                             end
                                         end

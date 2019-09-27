@@ -2,7 +2,7 @@ module Services
     module Scrapers
         class ParimatchScraperService < BaseScraperService
             def parse
-                html = open('https://pm.by/sport/khokkejj/kkhl-reguljarnyjj-sezon')
+                html = open('https://pm.by/sport/khokkejj/shvecija-shl')
                 doc = Nokogiri::HTML(html.read)
                 doc.encoding = 'utf-8'
 
@@ -39,7 +39,7 @@ module Services
                             events_from_parimatch = Event.new(date: final_date, 
                                                             home_team: teams[0],
                                                             guest_team: teams[1],
-                                                            match_kind: 'Хоккей.КХЛ' #doc.css('div#z_container div#z_contentw div#oddsList div.container h3').text.delete(' ')
+                                                            match_kind: 'SHL' #doc.css('div#z_container div#z_contentw div#oddsList div.container h3').text.delete(' ')
                                                             )
                             @temp_match_kind = events_from_parimatch.match_kind
                             if find_event_in_database(events_from_parimatch.date, events_from_parimatch.match_kind, events_from_parimatch.home_team, events_from_parimatch.guest_team).nil?
