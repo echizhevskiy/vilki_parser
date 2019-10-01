@@ -2,7 +2,7 @@ module Services
     module Dbhelper
         class DbHelperService
             class << self
-
+                
                 # получить поле date из таблицы Event
                 # проверить дату на outofdate
                 # удалить события со всеми ставками 
@@ -26,6 +26,11 @@ module Services
                         end
                     end
                     Bet.where(id: bet_id_array).destroy_all
+                end
+
+                def clean_arbitrations
+                    arbitration = Arbitration.all
+                    arbitration.delete_all
                 end
             end
         end

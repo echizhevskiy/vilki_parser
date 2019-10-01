@@ -8,7 +8,7 @@ module Services
                         start_parsing_time = Time.now
                         event_data = []
                         bet_data = []
-                        browser.goto('https://www.leon.ru/events/IceHockey/1970324836981376-Sweden-SHL')
+                        browser.goto('https://www.leon.ru/events/IceHockey/region/1970324836974837-Poland')
         
                         browser.is(class: /material-icons keyboard_arrow_down/).each do |icon|
                             icon.click
@@ -35,7 +35,7 @@ module Services
                                                             date: final_time,
                                                             home_team: teams[0],
                                                             guest_team: teams[1],
-                                                            match_kind: 'SHL' #main.css('div.head-title div.middle a').text.strip.delete(' ').gsub(/,.*/, '').gsub(/-.*-/, '.')                              
+                                                            match_kind: 'PHL' #main.css('div.head-title div.middle a').text.strip.delete(' ').gsub(/,.*/, '').gsub(/-.*-/, '.')                              
                                                             )
                                         @temp_match_kind = event_data.match_kind
                                         if find_event_in_database(event_data.date, event_data.match_kind, event_data.home_team, event_data.guest_team).nil?

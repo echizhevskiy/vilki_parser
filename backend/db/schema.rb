@@ -10,10 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_19_090015) do
+ActiveRecord::Schema.define(version: 2019_09_30_124113) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "arbitrations", force: :cascade do |t|
+    t.integer "event_id"
+    t.integer "first_bet_id"
+    t.integer "second_bet_id"
+    t.integer "third_bet_id"
+    t.float "ratio"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "bets", force: :cascade do |t|
     t.integer "event_id", null: false

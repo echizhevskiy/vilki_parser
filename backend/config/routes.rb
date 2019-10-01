@@ -3,4 +3,5 @@ Rails.application.routes.draw do
   get '/parser', to: 'parser#call_all_parsers'
   get '/calculate', to: 'calculate_arbitration#calculate_arbitration_total'
   resources :bet, only: [:index], defaults: { format: 'json'}
+  resources :arbitration, to: 'calculate_arbitration#index', defaults: { format: 'json'}
 end
