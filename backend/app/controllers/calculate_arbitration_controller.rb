@@ -1,31 +1,33 @@
 class CalculateArbitrationController < ApplicationController
     
     def index
-        arbitration_array = []
-        Arbitration.all.each do |arbitration|
-            arbitration_array.push({
-                home_team: arbitration.event.home_team,
-                guest_team: arbitration.event.guest_team,
-                date: arbitration.event.date,
-                match_kind: arbitration.event.match_kind,
-                office_1: arbitration.first_bet.office,
-                ratio_1: arbitration.first_bet.ratio,
-                attr_1_1: arbitration.first_bet.attr_1,
-                attr_3_1: arbitration.first_bet.attr_3,
-                office_2: arbitration.second_bet.office,
-                ratio_2: arbitration.second_bet.ratio,
-                attr_1_2: arbitration.second_bet.attr_1,
-                attr_3_2: arbitration.second_bet.attr_3
-            })
-        end
+        @arbitration = Arbitration.all
+        # arbitration_array = []
+        # Arbitration.all.each do |arbitration|
+        #     arbitration_array.push({
+        #         home_team: arbitration.event.home_team,
+        #         guest_team: arbitration.event.guest_team,
+        #         date: arbitration.event.date,
+        #         match_kind: arbitration.event.match_kind,
+        #         office_1: arbitration.first_bet.office,
+        #         ratio_1: arbitration.first_bet.ratio,
+        #         attr_1_1: arbitration.first_bet.attr_1,
+        #         attr_3_1: arbitration.first_bet.attr_3,
+        #         office_2: arbitration.second_bet.office,
+        #         ratio_2: arbitration.second_bet.ratio,
+        #         attr_1_2: arbitration.second_bet.attr_1,
+        #         attr_3_2: arbitration.second_bet.attr_3
+        #     })
+        # end
 
-        respond_to do |format|
-            format.json {render json: {:arbitrations => arbitration_array}, status: 200 }
-        end
+        # respond_to do |format|
+        #     format.json {render json: {:arbitrations => arbitration_array}, status: 200 }
+        # end
     end
 
     def calculate_arbitration_total
         Services::Dbhelper::DbHelperService.clean_empty_ratio_bets
+        Services::Dbhelper::DbHelperService.clean_arbitrations
 
         Event.all.each do |event|
             Bet.pluck(:office).uniq.each do |office1|
@@ -49,7 +51,6 @@ class CalculateArbitrationController < ApplicationController
                                             k = 1/ratio1 + 1/ratio2
                                             
                                             if k < 1
-                                                Services::Dbhelper::DbHelperService.clean_arbitrations
                                                 events_and_bets = Event.select("events.*, bets.*").joins(:bets).where(id: bet1.event_id).first
 
                                                 arbitration = Arbitration.new(event_id: bet2.event_id, first_bet_id: bet1.id, second_bet_id: bet2.id, ratio: k)

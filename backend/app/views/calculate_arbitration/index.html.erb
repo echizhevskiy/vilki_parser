@@ -1,0 +1,34 @@
+  <h1>Arbitration header</h1>
+ 
+ <%= link_to 'Calculate', calculate_path, remote: true %>
+ <%= link_to 'Parse_data', parser_path, remote: true %>
+<p></p>
+
+<table>
+  <tbody>
+    <% @arbitration.each do |arbitration| %>
+      <tr>
+        <td><%= arbitration.ratio %></td>
+        <td><%= arbitration.event.match_kind %></td>
+      </tr>
+      <tr>
+        <td><%= arbitration.first_bet.office %></td>
+        <td><%= arbitration.event.date %></td><td><td></td></td>
+        <td><%= arbitration.event.home_team %> vs <%= arbitration.event.guest_team %></td>
+        <td><%= arbitration.first_bet.ratio %></td>
+        <td><%= arbitration.first_bet.attr_1 %></td>
+        <td><%= arbitration.first_bet.attr_3 %></td>
+      </tr>
+      <tr>
+        <td><%= arbitration.second_bet.office %></td>
+        <td><%= arbitration.event.date %></td><td><td></td></td>
+        <td><%= arbitration.event.home_team %> vs <%= arbitration.event.guest_team %></td>
+        <td><%= arbitration.second_bet.ratio %></td>
+        <td><%= arbitration.second_bet.attr_1 %></td>
+        <td><%= arbitration.second_bet.attr_3 %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+ 
+<br>
