@@ -52,7 +52,7 @@ class CalculateArbitrationController < ApplicationController
                                             
                                             if k < 1
                                                 events_and_bets = Event.select("events.*, bets.*").joins(:bets).where(id: bet1.event_id).first
-
+                                                k = (100 - k*100).round(2)
                                                 arbitration = Arbitration.new(event_id: bet2.event_id, first_bet_id: bet1.id, second_bet_id: bet2.id, ratio: k)
                                                 arbitration.save
                                                 puts("---------------------Beggining of arbitration------------------------------------")

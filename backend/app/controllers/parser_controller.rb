@@ -10,6 +10,8 @@ class ParserController < ApplicationController
     def call_all_parsers
         Services::Scrapers::ParimatchScraperService.new.parse
         Services::Scrapers::LeonScraperService.new.parse
+
+        render :arbitration
     end
 
 end

@@ -45,6 +45,9 @@ gem 'awesome_print', '~> 1.8'
 # Gem for do not openning a browser when scrapping data
 gem 'headless'
 
+gem 'bootstrap-sass'
+gem 'jquery-rails'
+
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
 group :development, :test do

@@ -1,3 +1,120 @@
 // Place all the styles related to the calculate_arbitration controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.link-card {
+    position: relative;
+    border: 1px solid #eaedef;
+    border-radius: 8px;
+    background-color: #ffffff;
+    transition: all 0.2s ease-out;
+}
+
+.link-card:hover {
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.11);
+}
+
+.link-card > .top-block {
+    align-items: center;
+    display: flex;
+    padding: 32px 40px 32px 30px;
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    transition: all 0.2s ease-out;
+}
+
+.link-card > .top-block {
+    width: 100%;
+    max-width: 600px;
+}
+
+
+
+.link-card > .top-block .text-field.card-title {
+    max-width: 355px;
+    overflow: hidden;
+    color: #3a4752;
+    font-size: 18px;
+    font-weight: 600;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.link-card > .top-block .text-field.card-link {
+    max-width: 535px;
+    overflow: hidden;
+    color: #5a70e0;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.link-card .bottom-block {
+    align-items: center;
+    display: flex;
+    min-height: 60px;
+    padding: 10px 30px;
+    border-top: 1px solid #eaedef;
+}
+
+.drag-container {
+    margin-bottom: 25px;
+    border-radius: 8px;
+    outline: none !important;
+    transition: box-shadow 0.2s ease-out;
+}
+
+.links-container {
+    align-items: center;
+    display: flex;
+}
+
+.links-container h1 {
+    margin-bottom: 3%;
+}
+
+.links-page h1 {
+    color: #3a4752;
+    font-size: 32px;
+    font-weight: 600;
+}
+
+.add-link-btn-container {
+    margin-left: auto;
+}
+
+.button {
+    min-width: 220px;
+    padding: 12px 31px;
+    border: 0;
+    border-radius: 21px;
+    background-color: #7282d6;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    text-transform: uppercase;
+    outline: none;
+    transition: all 0.2s ease-out;
+    will-change: transform;
+}
+
+.btn-content {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    transition: opacity 0.2s ease-out;
+}
+
+.arbitration_header div{
+    display: inline;
+    margin-right: 25%;
+}
+
+.table-body tr td{
+    padding: 15px;
+}

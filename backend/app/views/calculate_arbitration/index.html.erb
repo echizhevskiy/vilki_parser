@@ -1,34 +1,55 @@
-  <h1>Arbitration header</h1>
- 
- <%= link_to 'Calculate', calculate_path, remote: true %>
- <%= link_to 'Parse_data', parser_path, remote: true %>
-<p></p>
+<div class="links-container"><h1>Arbitrations</h1>
+  <div class="add-link-btn-container ">
+      <div class="btn-content">
+          <%= button_to('Calculate', calculate_path, method: :get, :class => 'button')%>
+          <%= button_to('Parse Data', parser_path, method: :get, :class => 'button')%>
+      </div>
+  </div>
+</div>
 
-<table>
-  <tbody>
-    <% @arbitration.each do |arbitration| %>
-      <tr>
-        <td><%= arbitration.ratio %></td>
-        <td><%= arbitration.event.match_kind %></td>
-      </tr>
-      <tr>
-        <td><%= arbitration.first_bet.office %></td>
-        <td><%= arbitration.event.date %></td><td><td></td></td>
-        <td><%= arbitration.event.home_team %> vs <%= arbitration.event.guest_team %></td>
-        <td><%= arbitration.first_bet.ratio %></td>
-        <td><%= arbitration.first_bet.attr_1 %></td>
-        <td><%= arbitration.first_bet.attr_3 %></td>
-      </tr>
-      <tr>
-        <td><%= arbitration.second_bet.office %></td>
-        <td><%= arbitration.event.date %></td><td><td></td></td>
-        <td><%= arbitration.event.home_team %> vs <%= arbitration.event.guest_team %></td>
-        <td><%= arbitration.second_bet.ratio %></td>
-        <td><%= arbitration.second_bet.attr_1 %></td>
-        <td><%= arbitration.second_bet.attr_3 %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
- 
-<br>
+<div class="drag-container">
+  <div class="link-card">
+      <div class="top-block">
+            <div class="arbitration_header">
+              <div>1</div>
+              <div>1</div>
+            </div>
+            <div class="text-field card-title">sadas </div>
+      </div>
+
+      <div class="bottom-block">
+      </div>
+  </div>
+</div>
+
+<div class="link-card">
+<div class="drag-container">
+  <table>
+    <tbody class="table-body">
+      <% @arbitration.each do |arbitration| %>
+        <tr>
+          <td><%= arbitration.ratio %>%</td>
+          <td><%= arbitration.event.match_kind %></td>
+        </tr>
+        <tr>
+          <td><%= arbitration.first_bet.office %></td>
+          <td><%= arbitration.event.date %></td><td><td></td></td>
+          <td><%= arbitration.event.home_team %> vs <%= arbitration.event.guest_team %></td>
+          <td><%= arbitration.first_bet.ratio %></td>
+          <td><%= arbitration.first_bet.attr_1 %></td>
+          <td><%= arbitration.first_bet.attr_3 %></td>
+        </tr>
+        <tr>
+          <td><%= arbitration.second_bet.office %></td>
+          <td><%= arbitration.event.date %></td><td><td></td></td>
+          <td><%= arbitration.event.home_team %> vs <%= arbitration.event.guest_team %></td>
+          <td><%= arbitration.second_bet.ratio %></td>
+          <td><%= arbitration.second_bet.attr_1 %></td>
+          <td><%= arbitration.second_bet.attr_3 %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+  <br>
+</div>
