@@ -4,5 +4,5 @@ Rails.application.routes.draw do
   get '/calculate', to: 'calculate_arbitration#calculate_arbitration_total', as: :calculate
   resources :bet, only: [:index], defaults: { format: 'json'}
  # resources :arbitration, to: 'calculate_arbitration#index', defaults: { format: 'json'}
-  resources :arbitration, to: 'calculate_arbitration#index'
+  get '/arbitration', to: 'calculate_arbitration#index'
 end

@@ -73,5 +73,6 @@ class CalculateArbitrationController < ApplicationController
                 end
             end
         end
+        render 'index'
     end
 end

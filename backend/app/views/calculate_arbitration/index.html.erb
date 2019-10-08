@@ -22,34 +22,38 @@
   </div>
 </div>
 
-<div class="link-card">
-<div class="drag-container">
-  <table>
-    <tbody class="table-body">
-      <% @arbitration.each do |arbitration| %>
-        <tr>
-          <td><%= arbitration.ratio %>%</td>
-          <td><%= arbitration.event.match_kind %></td>
-        </tr>
-        <tr>
-          <td><%= arbitration.first_bet.office %></td>
-          <td><%= arbitration.event.date %></td><td><td></td></td>
-          <td><%= arbitration.event.home_team %> vs <%= arbitration.event.guest_team %></td>
-          <td><%= arbitration.first_bet.ratio %></td>
-          <td><%= arbitration.first_bet.attr_1 %></td>
-          <td><%= arbitration.first_bet.attr_3 %></td>
-        </tr>
-        <tr>
-          <td><%= arbitration.second_bet.office %></td>
-          <td><%= arbitration.event.date %></td><td><td></td></td>
-          <td><%= arbitration.event.home_team %> vs <%= arbitration.event.guest_team %></td>
-          <td><%= arbitration.second_bet.ratio %></td>
-          <td><%= arbitration.second_bet.attr_1 %></td>
-          <td><%= arbitration.second_bet.attr_3 %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
-  <br>
-</div>
+<% unless @arbitration.empty? || @arbitration.nil? %>
+  <% @arbitration.each do |arbitration| %>
+    <div class="link-card">
+      <div class="drag-container">
+        <table>
+          <tbody class="table-body">
+                <tr>
+                  <td><%= arbitration.ratio %>%</td>
+                  <td><%= arbitration.event.match_kind %></td>
+                </tr>
+                <tr>
+                  <td><%= arbitration.first_bet.office %></td>
+                  <td><%= arbitration.event.date %></td><td><td></td></td>
+                  <td><%= arbitration.event.home_team %> vs <%= arbitration.event.guest_team %></td>
+                  <td><%= arbitration.first_bet.ratio %></td>
+                  <td><%= arbitration.first_bet.attr_1 %></td>
+                  <td><%= arbitration.first_bet.attr_3 %></td>
+                </tr>
+                <tr>
+                  <td><%= arbitration.second_bet.office %></td>
+                  <td><%= arbitration.event.date %></td><td><td></td></td>
+                  <td><%= arbitration.event.home_team %> vs <%= arbitration.event.guest_team %></td>
+                  <td><%= arbitration.second_bet.ratio %></td>
+                  <td><%= arbitration.second_bet.attr_1 %></td>
+                  <td><%= arbitration.second_bet.attr_3 %></td>
+                </tr>
+          </tbody>
+        </table>
+      </div>
+        <br>
+    </div>
+  <% end %>
+<% else %>
+    <h3>Ooops.. There is no arbitration situations</h3>
+<% end %>

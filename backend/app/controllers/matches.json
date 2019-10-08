@@ -1,0 +1,10 @@
+{
+    "parimatch": {
+        "https://pm.by/sport/khokkejj/kkhl-reguljarnyjj-sezon": "KHL",
+        "https://pm.by/sport/khokkejj/nhl-reguljarnyjj-sezon": "NHL"
+    },
+    "leon": {
+        "https://www.leon.ru/events/IceHockey/1970324836981074-Russia-KHL": "KHL",
+        "https://www.leon.ru/events/IceHockey/1970324836981706-USA-NHL": "NHL"
+    }
+}
