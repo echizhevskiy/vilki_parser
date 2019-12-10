@@ -16,17 +16,17 @@ module Services
         
                             doc = Nokogiri::HTML(browser.html)
                             doc.encoding = 'utf-8'
-        
+                            #binding.pry
                             #достаю только раскрытые блоки в цикле, все остальные игнорируются
                             doc.css('div.content div.fon div.body div.main span').each do |main|
+                              #  binding.pry
                                 main.css('li.expanded').each do |data|
-                                    
-                                    
+                              #      binding.pry
                                         time = data.search('div:nth-child(1)').search('div:nth-child(1)').search('span:nth-child(1)').search('div:nth-child(1)').text
                                         date = data.search('div:nth-child(1)').search('div:nth-child(1)').search('span:nth-child(1)').search('div:nth-child(2)').text
                                         copy_date = date
                                         date = date.gsub(/[^0-9]/,'')
-                                        month_list = {"Янв"=>"Jan", "Фев"=>"Feb", "Мар"=>"Mar", "Апр"=>"Apr", "Май"=>"May", "Июн"=>"Jun", "Июл"=>"Jul", "Авг"=>"Aug", "Сент"=>"Sep", "Окт"=>"Oct", "Ноя"=>"Nov", "Дек"=>"Dec"}
+                                        month_list = {"Янв"=>"Jan", "Фев"=>"Feb", "Мар"=>"Mar", "Апр"=>"Apr", "Май"=>"May", "Июн"=>"Jun", "Июл"=>"Jul", "Авг"=>"Aug", "Сент"=>"Sep", "Окт"=>"Oct", "Нояб"=>"Nov", "Дек"=>"Dec"}
                                         date = date + " " + month_list[copy_date.gsub(/[^абвгдеёжзийклмнопрстуфхцчшщъыьэюя]+/i, '')]
                                         final_time = Time.parse time + " " + date
                                         final_time = final_time + 10800

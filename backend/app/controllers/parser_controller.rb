@@ -15,13 +15,14 @@ class ParserController < ApplicationController
         data.each_key do |office|
             data[office].each_key do |link|
                 if office == 'parimatch'
-                    Services::Scrapers::ParimatchScraperService.new.parse(link, data[office][link])
+                #    Services::Scrapers::ParimatchScraperService.new.parse(link, data[office][link])
                 elsif office == 'leon'
-                    Services::Scrapers::LeonScraperService.new.parse(link, data[office][link])
-                end           
+                #    Services::Scrapers::LeonScraperService.new.parse(link, data[office][link])
+                elsif office == 'favbet'
+                    Services::Scrapers::FavbetScraperService.new.parse(link, data[office][link])
+                end
             end
         end
-
         render 'calculate_arbitration/index'
     end
 

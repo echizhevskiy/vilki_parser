@@ -4,7 +4,9 @@
         "https://pm.by/sport/khokkejj/nhl-reguljarnyjj-sezon": "NHL"
     },
     "leon": {
-        "https://www.leon.ru/events/IceHockey/1970324836981074-Russia-KHL": "KHL",
         "https://www.leon.ru/events/IceHockey/1970324836981706-USA-NHL": "NHL"
+    },
+    "favbet": {
+        "https://www.favbet.by/ru/bets/#tours=18504": "KHL"
     }
 }
