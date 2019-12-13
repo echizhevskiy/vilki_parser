@@ -16,12 +16,10 @@ module Services
         
                             doc = Nokogiri::HTML(browser.html)
                             doc.encoding = 'utf-8'
-                            #binding.pry
+
                             #достаю только раскрытые блоки в цикле, все остальные игнорируются
                             doc.css('div.content div.fon div.body div.main span').each do |main|
-                              #  binding.pry
                                 main.css('li.expanded').each do |data|
-                              #      binding.pry
                                         time = data.search('div:nth-child(1)').search('div:nth-child(1)').search('span:nth-child(1)').search('div:nth-child(1)').text
                                         date = data.search('div:nth-child(1)').search('div:nth-child(1)').search('span:nth-child(1)').search('div:nth-child(2)').text
                                         copy_date = date
@@ -48,9 +46,10 @@ module Services
                                             @event_id = find_event_in_database(event_data.date, event_data.match_kind, event_data.home_team, event_data.guest_team)
                                         end
                                     #ищем нужную секцию с тоталом
-                                    data.search('div:nth-child(2)').search('ul:nth-child(1)').search('li:nth-child(2)').css('div').each do |div|
+                                    block_number = 1
+                                    data.search('div:nth-child(2)').search('ul:nth-child(1)').search('li:nth-child(2)').css('div.bet-market-family').each do |div|
                                         if (div.search('div:nth-child(1)').text.strip == "Тотал")
-                                            data.search('div:nth-child(2)').search('ul:nth-child(1)').search('li:nth-child(2)').search('div:nth-child(4)').search('ul:nth-child(2)').css('li').each do |li| 
+                                            data.search('div:nth-child(2)').search('ul:nth-child(1)').search('li:nth-child(2)').search("div:nth-child(#{block_number})").search('ul:nth-child(2)').css('li').each do |li| 
                                                 get_total_with_min_max = li.search('span:nth-child(1)').text.split(' ')
                                                 bet_data = Bet.new(
                                                                 event_id: @event_id,
@@ -66,6 +65,9 @@ module Services
                                                     puts "Bet " + bet_data + "hasn't been saved to the DataBase"
                                                 end
                                             end
+                                            block_number = 0
+                                        else
+                                            block_number = block_number + 1 
                                         end  
                                     end  
         
