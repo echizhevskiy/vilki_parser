@@ -12,17 +12,22 @@ class ParserController < ApplicationController
         file = File.read('app/controllers/matches.json')
         data = JSON.parse(file)
 
+        threads = []
         data.each_key do |office|
-            data[office].each_key do |link|
+            data[office].each_key do |link|                
                 if office == 'parimatch'
-                #    Services::Scrapers::ParimatchScraperService.new.parse(link, data[office][link])
+                   threads << Thread.new do
+                     Services::Scrapers::ParimatchScraperService.new.parse(link, data[office][link]) 
+                     ActiveRecord::Base.connection.close
+                   end
                 elsif office == 'leon'
-                #    Services::Scrapers::LeonScraperService.new.parse(link, data[office][link])
+                #   p threads << Thread.new { Services::Scrapers::LeonScraperService.new.parse(link, data[office][link]) }
                 elsif office == 'favbet'
-                    Services::Scrapers::FavbetScraperService.new.parse(link, data[office][link])
+                #   p threads << Thread.new { Services::Scrapers::FavbetScraperService.new.parse(link, data[office][link]) } 
                 end
             end
         end
+        p threads.map(&:join)
         render 'calculate_arbitration/index'
     end
 

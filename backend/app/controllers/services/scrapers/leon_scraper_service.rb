@@ -2,7 +2,9 @@ module Services
     module Scrapers
         class LeonScraperService < BaseScraperService
             def parse(link, match_kind)
+                puts "View data from leon"
                 Headless.ly do
+                    puts "View data from leon"
                     browser = Watir::Browser.new
                     
                         start_parsing_time = Time.now
@@ -12,7 +14,7 @@ module Services
         
                         browser.is(class: /material-icons keyboard_arrow_down/).each do |icon|
                             icon.click
-                            sleep(0.4)
+                            sleep(1.4)
         
                             doc = Nokogiri::HTML(browser.html)
                             doc.encoding = 'utf-8'

@@ -2,7 +2,9 @@ module Services
     module Scrapers
         class FavbetScraperService < BaseScraperService
             def parse(link, match_kind)
+                puts "View data from favbet"
                 Headless.ly do
+                    puts "View data from favbet"
                   #  binding.pry
                     browser = Watir::Browser.new
                         start_parsing_time = Time.now
@@ -10,9 +12,10 @@ module Services
                         bet_data = []
 
                         browser.goto(link)
-                        sleep(1.5)
-
+                        sleep(4)
+                       # binding.pry
                         browser.uls(class: /events--list/).each do |event|
+                          #  binding.pry
                             event.lis(class: /event--head-block/).each do |press_button_with_info|
                                 event_info = Nokogiri::HTML(press_button_with_info.html)
                                 event_info.encoding = 'utf-8'
@@ -45,32 +48,37 @@ module Services
                                 press_button_with_info.divs(class: /event--more/).each do |k|
                                   #  binding.pry
                                     k.button.click
-                                    sleep(0.4)
+                                    sleep(5)
 
                                     page_with_more_info = Nokogiri::HTML(browser.html)
                                     page_with_more_info.encoding = 'utf-8'
 
-                                   # binding.pry
+                                    #binding.pry
                                     page_with_more_info.css('ul.market--column--0').each do |list|
-                                        if list.search('li:nth-child(7)').search('div:nth-child(1)')[0].text == 'Тотал'
-                                            list.search('li:nth-child(7)').search('ul:nth-child(3)').search('li:nth-child(1)').search('ul:nth-child(2)').each do |li|
-                                                li.search('label:nth-child(1)').each do |line_with_bets|
-                                                    total_number = line_with_bets.search('span:nth-child(1)').text.mb_chars.downcase.to_s.split(' ')[1].delete('()')
-                                                    total_min_max = line_with_bets.search('span:nth-child(1)').text.mb_chars.downcase.to_s.split(' ')[0]
-                                                    ratio = line_with_bets.search('button:nth-child(2)').text
-                                                   # binding.pry
-                                                    bet_data = Bet.new(
-                                                        event_id: @event_id,
-                                                        kind: "total",
-                                                        office: "favbet",
-                                                        ratio: ratio,
-                                                        attr_1: total_number,
-                                                        attr_3: total_min_max,
-                                                        last_update: start_parsing_time                                  
-                                                    )
-                                                    if bet_data.save
-                                                    else
-                                                        puts "Bet " + bet_data + "hasn't been saved to the DataBase"
+                                      #  binding.pry
+                                        list.css('li').each_with_index do |total_section, index|
+                                           # binding.pry
+                                            if list.search("li:nth-child(#{index+1})").search('div:nth-child(1)')[0].nil? 
+                                            elsif list.search("li:nth-child(#{index+1})").search('div:nth-child(1)')[0].text == 'Тотал'
+                                                    list.search("li:nth-child(#{index+1})").search('ul:nth-child(3)').search('li:nth-child(1)').search('ul:nth-child(2)').each do |li|
+                                                        li.search('label:nth-child(1)').each do |line_with_bets|
+                                                            total_number = line_with_bets.search('span:nth-child(1)').text.mb_chars.downcase.to_s.split(' ')[1].delete('()')
+                                                            total_min_max = line_with_bets.search('span:nth-child(1)').text.mb_chars.downcase.to_s.split(' ')[0]
+                                                            ratio = line_with_bets.search('button:nth-child(2)').text
+                                                        #  binding.pry
+                                                            bet_data = Bet.new(
+                                                                event_id: @event_id,
+                                                                kind: "total",
+                                                                office: "favbet",
+                                                                ratio: ratio,
+                                                                attr_1: total_number,
+                                                                attr_3: total_min_max,
+                                                                last_update: start_parsing_time                                  
+                                                            )
+                                                            if bet_data.save
+                                                            else
+                                                                puts "Bet " + bet_data + "hasn't been saved to the DataBase"
+                                                            end
                                                     end
                                                 end
                                             end

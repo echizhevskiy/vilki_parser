@@ -1,20 +1,24 @@
+load 'base_scraper_service.rb'
 module Services
     module Scrapers
         class ParimatchScraperService < BaseScraperService
             def parse(link, match_kind)
+                puts "View data from parimatch"
                 Headless.ly do
                     browser = Watir::Browser.new
                     browser.goto(link)
-
+                   # binding.pry
                     #html = open(link)
                     #doc = Nokogiri::HTML(html.read)
                     doc = Nokogiri::HTML.parse(browser.html)
                     doc.encoding = 'utf-8'
 
+                    sleep(8)
                     # для заполнения поля last_update в базе, в последствие удаление событий из таблицы Bets при парсинге матча с одной конторы
                     start_parsing_time = Time.now
-
+                   # binding.pry
                     doc.css('div#z_container div#z_contentw div#oddsList table.dt').each do |el|
+                   #     binding.pry
                         el.css('tbody.row1.props').each do |data|
                             data['class']="row1 props processed"
                         end

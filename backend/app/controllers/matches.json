@@ -1,12 +1,11 @@
 {
     "parimatch": {
-        "https://pm.by/sport/khokkejj/kkhl-reguljarnyjj-sezon": "KHL",
-        "https://pm.by/sport/khokkejj/nhl-reguljarnyjj-sezon": "NHL"
+        "https://pm.by/sport/khokkejj/vkhl": "VHL.Hockey"
     },
     "leon": {
-        "https://www.leon.ru/events/IceHockey/1970324836981706-USA-NHL": "NHL"
+        "https://www.leon.ru/events/IceHockey/1970324836981174-Russia-VHL": "VHL.Hockey"
     },
     "favbet": {
-        "https://www.favbet.by/ru/bets/#tours=18504": "KHL"
+        "https://favbet.by/ru/bets/#tours=17451": "VHL.Hockey"
     }
 }
