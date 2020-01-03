@@ -1,4 +1,3 @@
-load 'base_scraper_service.rb'
 module Services
     module Scrapers
         class ParimatchScraperService < BaseScraperService
@@ -7,7 +6,7 @@ module Services
                 Headless.ly do
                     browser = Watir::Browser.new
                     browser.goto(link)
-                   # binding.pry
+                    #binding.pry
                     #html = open(link)
                     #doc = Nokogiri::HTML(html.read)
                     doc = Nokogiri::HTML.parse(browser.html)
