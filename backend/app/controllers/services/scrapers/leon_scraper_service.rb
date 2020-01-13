@@ -4,7 +4,6 @@ module Services
             def parse(link, match_kind)
                 puts "View data from leon"
                 Headless.ly do
-                    puts "View data from leon"
                     browser = Watir::Browser.new
                     
                         start_parsing_time = Time.now

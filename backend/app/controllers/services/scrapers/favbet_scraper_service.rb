@@ -4,7 +4,6 @@ module Services
             def parse(link, match_kind)
                 puts "View data from favbet"
                 Headless.ly do
-                    puts "View data from favbet"
                   #  binding.pry
                     browser = Watir::Browser.new
                         start_parsing_time = Time.now

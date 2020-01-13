@@ -73,6 +73,6 @@ class CalculateArbitrationController < ApplicationController
                 end
             end
         end
-        render 'index'
+        redirect_to root_path # render 'index'
     end
 end
